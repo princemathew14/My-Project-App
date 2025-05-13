@@ -1,0 +1,13 @@
+{% extends 'myapp/base_generic.html' %}
+
+{% block title %}Project Form{% endblock %}
+
+{% block content %}
+<h2>{{ form.instance.pk|yesno:"Edit Project,Create Project" }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+<a href="{% url 'myapp:project_list' %}">Cancel</a>
+{% endblock %}

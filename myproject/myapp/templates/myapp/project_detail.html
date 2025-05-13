@@ -1,0 +1,14 @@
+{% extends 'myapp/base_generic.html' %}
+
+{% block title %}Project Detail{% endblock %}
+
+{% block content %}
+<h2>{{ project.name }}</h2>
+<p>{{ project.description }}</p>
+<p><strong>Start:</strong> {{ project.start_date }}</p>
+<p><strong>End:</strong> {{ project.end_date }}</p>
+
+<a href="{% url 'myapp:project_update' project.pk %}">Edit</a> |
+<a href="{% url 'myapp:project_delete' project.pk %}">Delete</a> |
+<a href="{% url 'myapp:project_list' %}">Back to list</a>
+{% endblock %}
