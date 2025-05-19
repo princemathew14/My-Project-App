@@ -1,4 +1,5 @@
-Project Management System (Django + PostgreSQL)
+## Project Management System (Django + PostgreSQL)
+
 This is a Django-based web application for managing software projects, tasks, users, comments, and time logs.
 It allows project teams to track task progress, log hours, and collaborate via comments.
 
@@ -13,7 +14,7 @@ Comments (attached to tasks)
 Time Logs (to track effort)
 Setup Instructions
 1. Clone the Repository
-git clone https://github.com/princemathew14/Django-Assignment-01.git
+git clone https://github.com/princemathew14/My-Project-App.git
 
 cd Django-Assignment-01 2. Create a Virtual Environment python -m venv venv
 
@@ -27,8 +28,11 @@ Edit .env and fill in: SECRET_KEY='your-django-secret-key' DEBUG=True DATABASE_U
 Migrations & Superuser
 
 Apply Migrations python manage.py makemigrations python manage.py migrate
+
 Create a Superuser python manage.py createsuperuser
+
 Enter username, email, and password as prompted
+
 Run the Development Server python manage.py runserver Visit: http://127.0.0.1:8000/admin/ to access the Django Admin Dashboard.
 
 Log in with your superuser credentials to manage Projects, Users, Tasks, Comments, and Time Logs. Admin Sample Data Use the admin interface to add 3–5 records for each model.
@@ -51,7 +55,7 @@ env.example # Sample env file to share
 
 requirements.txt # All Python dependencies
 
-README.md – CRUD Implementation Overview
+##  CRUD Implementation Overview
 
 CRUD Functionality Implemented
 
@@ -94,9 +98,12 @@ Click Delete to confirm and remove it.
 
 After each action, a success message will be displayed.
 
- Authentication & Authorization Setup Guide
+##  Authentication & Authorization Setup Guide
+
 Google OAuth Setup (django-allauth)
+
 1. Create OAuth Credentials in Google Cloud Console
+
 Visit: https://console.cloud.google.com/
 
 Create a new project or choose an existing one
@@ -122,13 +129,19 @@ Client Secret
 Edit your project’s .env file:
 
 GOOGLE_CLIENT_ID=your-google-client-id-here
+
 GOOGLE_CLIENT_SECRET=your-google-client-secret-here
+
 Also make sure .env.example includes:
+
 GOOGLE_CLIENT_ID=
+
 GOOGLE_CLIENT_SECRET=
+
 3. Configure Google Provider in settings.py
 
 How to Test Login (Local and Google)
+
 1. Local Login
 Visit: http://127.0.0.1:8000/accounts/signup/ to register
 
