@@ -1,14 +1,14 @@
-{% extends 'myapp/base_generic.html' %}
+{% extends 'base_generic.html' %}
 
 {% block title %}Delete Project{% endblock %}
 
 {% block content %}
-<h2>Confirm Deletion</h2>
-<p>Are you sure you want to delete "{{ project.name }}"?</p>
+<h2>Are you sure you want to delete "{{ project.name }}"?</h2>
 
 <form method="post">
     {% csrf_token %}
-    <button type="submit">Yes, Delete</button>
+    <button type="submit">Yes, delete</button>
 </form>
-<a href="{% url 'myapp:project_detail' project.pk %}">Cancel</a>
+
+<p><a href="{% url 'myapp:project_detail' project.pk %}">Cancel</a></p>
 {% endblock %}

@@ -16,8 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import RedirectView
+
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='/projects/', permanent=False)),
     path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),  # allauth login/logout/signup
     path('projects/', include('myapp.urls')),  # Routes all /projects/ to my app
 ]

@@ -1,15 +1,30 @@
-{% extends 'myapp/base_generic.html' %}
+{% extends 'base_generic.html' %}
 
 {% block title %}All Projects{% endblock %}
 
 {% block content %}
 <h2>All Projects</h2>
-<ul>
-    {% for project in projects %}
-        <li>
-            <a href="{% url 'myapp:project_detail' project.pk %}">{{ project.name }}</a>
-        </li>
-    {% endfor %}
-</ul>
-<a href="{% url 'myapp:project_create' %}">Create New Project</a>
+
+{% if projects %}
+    <ul>
+        {% for project in projects %}
+            <li>
+                <a href="{% url 'myapp:project_detail' project.pk %}">
+                    {{ project.name }}
+                </a>
+                {% if project.owner == user %}
+                    (You)
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No projects have been added yet.</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+    <p><a href="{% url 'myapp:project_create' %}">Create New Project</a></p>
+{% else %}
+    <p><a href="{% url 'account_login' %}">Login</a> to create a project.</p>
+{% endif %}
 {% endblock %}

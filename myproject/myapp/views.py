@@ -1,40 +1,48 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Project
 
-class ProjectListView(ListView):
+class ProjectListView(LoginRequiredMixin, ListView):
     model = Project
     template_name = 'myapp/project_list.html'
     context_object_name = 'projects'
 
-class ProjectDetailView(DetailView):
+class ProjectDetailView(LoginRequiredMixin, DetailView):
     model = Project
-    template_name = 'myapp/project_detail.html'
+    template_name = 'myapp/project_detail.html'  # Optional if using default
+    context_object_name = 'project'              # Optional: makes template cleaner
 
-class ProjectCreateView(CreateView):
+
+class ProjectCreateView(LoginRequiredMixin, CreateView):
     model = Project
     fields = ['name', 'description', 'start_date', 'end_date']
     template_name = 'myapp/project_form.html'
     success_url = reverse_lazy('myapp:project_list')
 
     def form_valid(self, form):
-        response = super().form_valid(form)
+        form.instance.owner = self.request.user
         messages.success(self.request, 'Project created successfully.')
-        return response
+        return super().form_valid(form)
 
-class ProjectUpdateView(UpdateView):
+
+
+class ProjectUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Project
     fields = ['name', 'description', 'start_date', 'end_date']
     template_name = 'myapp/project_form.html'
     success_url = reverse_lazy('myapp:project_list')
 
     def form_valid(self, form):
-        response = super().form_valid(form)
         messages.success(self.request, 'Project updated successfully.')
-        return response
+        return super().form_valid(form)
 
-class ProjectDeleteView(DeleteView):
+    def test_func(self):
+        return self.request.user.is_staff or self.get_object().owner == self.request.user
+
+
+class ProjectDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Project
     template_name = 'myapp/project_confirm_delete.html'
     success_url = reverse_lazy('myapp:project_list')
@@ -42,4 +50,7 @@ class ProjectDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Project deleted successfully.')
         return super().delete(request, *args, **kwargs)
+
+    def test_func(self):
+        return self.request.user.is_staff or self.get_object().owner == self.request.user
 
