@@ -184,6 +184,88 @@ Will get a 403 Forbidden or redirect when trying to update/delete someone elseâ€
  Superuser or Staff
 Can update or delete any object, regardless of ownership
 
+##  Django REST Framework (DRF) API Integration
+
+This project now includes a fully functional RESTful API built with **Django REST Framework (DRF)**. It exposes key models through standard CRUD endpoints for use by frontend apps, mobile clients, or third-party services.
+
+
+
+###  Base API URL
+
+/api/
+
+
+### Exposed Models via API
+
+Currently, the following models are exposed:
+
+- `Project`: `/api/projects/`
+
+###  How to Test the API (Browsable API)
+
+1. **Start the server**
+   
+   python manage.py runserver
+Login via the browser
+Visit:
+
+http://127.0.0.1:8000/accounts/login/
+Log in with your Django user credentials (use createsuperuser if needed).
+
+Access the API
+Navigate to:
+
+http://127.0.0.1:8000/api/
+weâ€™ll see a browsable interface for our API endpoints.
+
+Use HTTP methods
+
+GET: View list or detail
+
+POST: Create objects (authenticated only)
+
+PUT / PATCH: Update
+
+DELETE: Remove
+
+Note: Most actions require to be logged in (IsAuthenticated permission).
+
+ Optional: API Documentation
+We enabled drf-spectacular, we can also access generated API docs:
+
+Swagger UI:
+
+http://127.0.0.1:8000/api/schema/swagger-ui/
+Redoc UI:
+
+http://127.0.0.1:8000/api/schema/redoc/
+OpenAPI Schema (raw JSON):
+
+http://127.0.0.1:8000/api/schema/
+Example Git Commit
+
+git add .
+git commit -m "feat: Add DRF API endpoints"
+git push
+File Overview
+myapp/serializers.py: Serializers for converting model instances to JSON
+
+myapp/views.py: DRF ModelViewSet classes
+
+myproject/urls.py: DRF router and API schema URLs
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

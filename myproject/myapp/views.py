@@ -3,6 +3,17 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Project
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from .serializers import ProjectSerializer
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    queryset = Project.objects.all().order_by('-id')
+    serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 class ProjectListView(LoginRequiredMixin, ListView):
     model = Project

@@ -17,6 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
+from rest_framework.routers import DefaultRouter
+from myapp.views import ProjectViewSet
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+
+router = DefaultRouter()
+router.register(r'projects', ProjectViewSet, basename='project')
 
 
 urlpatterns = [
@@ -24,4 +30,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),  # allauth login/logout/signup
     path('projects/', include('myapp.urls')),  # Routes all /projects/ to my app
+    path('api/', include(router.urls)),     # DRF API endpoints
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
