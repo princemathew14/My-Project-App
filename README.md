@@ -267,17 +267,25 @@ We can append the following query parameters to our API list URLs (e.g., `/api/p
 Use model field names to return matching records:
 
 /api/projects/?name=Website Redesign
+
 /api/projects/?owner__id=2
+
  Searching (?search=term)
+
 Search across multiple fields defined in the search_fields of the ViewSet:
 
 /api/projects/?search=website
+
 Ordering (?ordering=field)
+
 Order results by a field in ascending or descending order:
 
 /api/projects/?ordering=start_date
+
 /api/projects/?ordering=-end_date
+
 Pagination
+
 Pagination splits results into pages to improve performance and usability.
 
 Default Page Size: 5 items per page (configurable via PAGE_SIZE)
@@ -286,7 +294,9 @@ Use ?page= to navigate:
 
 
 /api/projects/?page=1
+
 /api/projects/?page=2
+
 Response format includes:
 
 {
@@ -303,6 +313,7 @@ Response format includes:
   ]
 }
  Custom Permission: IsOwnerOrReadOnly
+
 Read Access (GET, HEAD, OPTIONS): Allowed to any authenticated user.
 
 Write Access (PUT, PATCH, DELETE): Only the owner of the object can modify it.
@@ -310,21 +321,29 @@ Write Access (PUT, PATCH, DELETE): Only the owner of the object can modify it.
 Enforced using a custom permission class IsOwnerOrReadOnly.
 
 Example:
+
 User A creates a project.
+
 User B cannot edit or delete that project (403 Forbidden).
 
  How to Test Features
+
 Prerequisites
+
 Server running:
 
 python manage.py runserver
+
 Log in:
 
 http://127.0.0.1:8000/accounts/login/
+
  Test Filtering/Searching/Ordering
+
 Go to:
 
 http://127.0.0.1:8000/api/projects/
+
 Try:
 
 ?search=keyword
@@ -334,13 +353,17 @@ Try:
 ?owner__id=1
 
  Test Pagination
+
 Add enough projects (or reduce PAGE_SIZE).
 
 Try:
 
 /api/projects/?page=1
+
 /api/projects/?page=2
+
  Test Permissions
+ 
 Log in as User A and create a project.
 
 Log out. Log in as User B.
