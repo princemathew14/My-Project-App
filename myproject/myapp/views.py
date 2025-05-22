@@ -6,11 +6,18 @@ from .models import Project
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from .serializers import ProjectSerializer
+from rest_framework import viewsets, permissions, filters
+from .permissions import IsOwnerOrReadOnly
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all().order_by('-id')
     serializer_class = ProjectSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
+
+    # Filtering
+    filterset_fields = ['name', 'start_date', 'owner__id']  # use our model fields
+    search_fields = ['name', 'description']
+    ordering_fields = ['start_date', 'end_date', 'name']
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
