@@ -20,6 +20,9 @@ from django.views.generic import RedirectView
 from rest_framework.routers import DefaultRouter
 from myapp.views import ProjectViewSet
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 router = DefaultRouter()
 router.register(r'projects', ProjectViewSet, basename='project')
@@ -35,3 +38,6 @@ urlpatterns = [
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
+# CSS (Docker)
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

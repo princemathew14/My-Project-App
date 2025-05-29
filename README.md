@@ -372,6 +372,82 @@ Try to PATCH or DELETE User A's project.
 
 we should receive: 403 Forbidden.
 
+## Django + DRF Project (Dockerized)
+
+This project is a containerized Django REST Framework application using PostgreSQL and django-environ for environment-based settings.
+
+ Getting Started (Docker Compose)
+
+1️ Build Docker Images
+
+docker compose build
+
+2️ Start Application
+
+docker compose up -d
+
+This starts:
+
+web: Django app using Gunicorn
+
+db: PostgreSQL container
+
+3️ Stop Application
+
+docker compose down
+
+To stop and delete database volume (permanent data loss):
+
+
+docker compose down -v
+
+Setting Up .env
+
+Copy the provided .env.example:
+
+cp .env.example .env
+
+Edit .env with your secret key and database credentials. Example:
+
+
+SECRET_KEY='your-django-secret-key'
+
+DEBUG=True
+
+DATABASE_URL='postgres://your_user:your_password@db:5432/your_db'
+
+POSTGRES_DB=your_db
+
+POSTGRES_USER=your_user
+
+POSTGRES_PASSWORD=your_password
+
+Running Migrations
+
+If migrations are not included in the startup command, run:
+
+
+docker compose exec web python manage.py migrate
+
+ Accessing the App
+
+Main site: http://localhost:8000
+
+DRF API root: http://localhost:8000/api/
+
+Admin panel: http://localhost:8000/admin/
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
