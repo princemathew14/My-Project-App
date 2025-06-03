@@ -437,6 +437,134 @@ DRF API root: http://localhost:8000/api/
 
 Admin panel: http://localhost:8000/admin/
 
+ ## AWS EC2 Deployment Guide
+
+This section describes the full deployment process for running the containerized Django + DRF + PostgreSQL project on AWS EC2 using Docker and Docker Compose.
+
+ Key AWS Services Used
+
+Amazon ECR (Elastic Container Registry) – Stores the Docker image of the Django app.
+
+Amazon EC2 (Elastic Compute Cloud) – Runs the Dockerized application in a virtual server.
+
+IAM Role for EC2 – Provides the EC2 instance with permission to securely pull images from ECR.
+
+ Steps to Push Docker Image to ECR
+
+Create a private ECR repository in AWS Console (e.g., my-django-app).
+
+Authenticate Docker with ECR:
+
+aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <account_id>.dkr.ecr.<region>.amazonaws.com
+
+Tag and push the image:
+
+docker tag my-django-app:latest <account_id>.dkr.ecr.<region>.amazonaws.com/my-django-app:latest
+
+docker push <account_id>.dkr.ecr.<region>.amazonaws.com/my-django-app:latest
+
+EC2 Setup & Configuration
+
+Launch a new EC2 instance (Amazon Linux 2023 or Ubuntu 24.04) using Free Tier t3.micro or t2.micro.
+
+Attach IAM Role that has AmazonEC2ContainerRegistryReadOnly permissions.
+
+Create a security group:
+
+Allow SSH from your IP
+
+Allow TCP 8000 from anywhere (for app access)
+
+SSH into the EC2 instance:
+
+ssh -i /path/to/key.pem ec2-user@<your-ec2-public-ip>
+
+Install Docker & Compose:
+
+For Amazon Linux:
+
+sudo yum install -y docker
+
+sudo service docker start
+
+sudo usermod -aG docker ec2-user
+
+newgrp docker
+
+Manually install Compose V2:
+
+mkdir -p ~/.docker/cli-plugins/
+
+curl -SL https://github.com/docker/compose/releases/download/v2.24.5/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
+
+chmod +x ~/.docker/cli-plugins/docker-compose
+
+Transfer files to EC2:
+
+scp -i /path/to/key.pem docker-compose.yml .env ec2-user@<ec2-ip>:~
+
+Required Modifications for EC2 Deployment
+
+ docker-compose.yml
+
+Update the following:
+
+Replace build: . with the full ECR image path:
+
+image: <account_id>.dkr.ecr.<region>.amazonaws.com/my-django-app:latest
+
+Remove the local volume mount:
+
+# - .:/app  ← remove this line
+
+Adjust command (remove migrate, run it manually after boot):
+
+command: gunicorn myproject.wsgi:application --bind 0.0.0.0:8000
+
+ .env file for EC2
+
+Set production-safe values:
+
+DEBUG=False
+
+SECRET_KEY=your-ec2-production-key
+
+DATABASE_URL=postgres://postgres:yourpassword@db:5432/yourdbname
+
+ALLOWED_HOSTS=your-ec2-public-ip,ec2-xxx-xxx.compute.amazonaws.com
+
+CSRF_TRUSTED_ORIGINS=http://your-ec2-public-ip,http://ec2-xxx-xxx.compute.amazonaws.com
+
+ Running the Application on EC2
+
+Start containers:
+
+docker compose up -d
+
+Apply database migrations:
+
+docker compose exec web python manage.py migrate
+
+(Optional) Collect static files:
+
+docker compose exec web python manage.py collectstatic --noinput
+
+Access your application:
+
+Open your browser and go to:
+
+http://<your-ec2-public-ip>:8000
+
+
+
+
+
+
+
+
+
+
+
 
 
 
