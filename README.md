@@ -531,9 +531,9 @@ SECRET_KEY=your-ec2-production-key
 
 DATABASE_URL=postgres://postgres:yourpassword@db:5432/yourdbname
 
-ALLOWED_HOSTS=your-ec2-public-ip,ec2-xxx-xxx.compute.amazonaws.com
+ALLOWED_HOSTS=myprojectapp.it.com,www.myprojectapp.it.com
 
-CSRF_TRUSTED_ORIGINS=http://your-ec2-public-ip,http://ec2-xxx-xxx.compute.amazonaws.com
+CSRF_TRUSTED_ORIGINS=https://myprojectapp.it.com,https://www.myprojectapp.it.com
 
  Running the Application on EC2
 
@@ -553,7 +553,7 @@ Access your application:
 
 Open your browser and go to:
 
-http://<your-ec2-public-ip>:8000
+https://www.myprojectapp.it.com
 
 
 
