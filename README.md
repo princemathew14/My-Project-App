@@ -555,60 +555,146 @@ Open your browser and go to:
 
 https://www.myprojectapp.it.com
 
+# Orchestrating and Monitoring with Kubernetes
 
+ Prerequisites
+ 
+Docker (logged in to ECR)
 
+Minikube (running locally)
 
+kubectl (configured to use Minikube)
 
+Helm (for monitoring stack)
 
+ Local Kubernetes Setup with ECR
 
+1. Start Minikube
 
+minikube start --driver=docker
 
+2. Create ECR Image Pull Secret
 
+kubectl create secret docker-registry my-ecr-secret \
 
+  --docker-server=<aws_account_id>.dkr.ecr.<region>.amazonaws.com \
 
+  --docker-username=AWS \
 
+  --docker-password=$(aws ecr get-login-password --region <region>) \
 
+  --docker-email=you@example.com
 
+3. Patch Default Service Account
 
+kubectl patch serviceaccount default \
 
+  -p '{"imagePullSecrets": [{"name": "my-ecr-secret"}]}'
 
+ Health Check Endpoint for Django
 
+Ensure your Django app has a health check view in views.py:
 
+from rest_framework.views import APIView
 
+from rest_framework.response import Response
 
+from rest_framework import status
 
+class HealthCheckView(APIView):
 
+    def get(self, request, *args, **kwargs):
 
+        return Response({"status": "ok"}, status=status.HTTP_200_OK)
 
+Add a URL in urls.py:
 
+from django.urls import path
 
+from myapp.views import HealthCheckView
 
+urlpatterns = [
 
+    path('api/health/', HealthCheckView.as_view(), name='api-health'),
+    
+]
+ Create Kubernetes Secrets
 
+Using --from-env-file (base64 encoding is NOT required):
 
+kubectl create secret generic postgres-secret --from-env-file=k8s-pg-secrets.env
 
+kubectl create secret generic app-secret --from-env-file=k8s-app-secrets.env
 
+ Ensure DATABASE_URL uses the Kubernetes service name as the hostname (e.g., postgres-service).
 
+ Managing Local Docker Images with Minikube
 
+If using a private registry like ECR, you must 
 
+Use imagePullSecrets (as shown above)
 
+Deploy Kubernetes Manifests
 
+kubectl apply -f k8s/app-configmap.yaml
 
+kubectl apply -f k8s/app-deployment.yaml
 
+kubectl apply -f k8s/postgres-deployment.yaml
 
+kubectl apply -f k8s/app-service.yaml
 
+kubectl apply -f k8s/postgres-service.yaml
 
+Install Monitoring Stack with Helm
 
+Add and update Helm repo:
 
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 
+helm repo update
 
+Install with specific version:
 
+helm install prom-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace --version 72.0.1
 
+ Access the Application
 
+minikube service app-service --url
 
+ Access Grafana
 
+Get admin password:
 
+kubectl get secret --namespace monitoring prom-stack-grafana -o jsonpath="{.data.admin-password}" | base64 --decode
 
+Port-forward to Grafana:
+
+kubectl port-forward svc/prom-stack-grafana -n monitoring 3000:80
+
+Access at http://localhost:3000
+
+ Run Django Migrations
+
+kubectl exec -it <pod-name> -- python manage.py migrate
+
+To get the pod name:
+
+kubectl get pods
+
+ Demonstrate Scaling and Rolling Updates
+
+Scale the app:
+
+kubectl scale deployment app-deployment --replicas=3
+
+Rollout new image:
+
+kubectl set image deployment/app-deployment web=<new-image-tag>
+
+ Cost Warning
+
+ Warning: Using managed Kubernetes services like Amazon EKS can incur significant costs if you leave clusters running. Always shut down or delete resources after testing to avoid unexpected charges.
 
 
 

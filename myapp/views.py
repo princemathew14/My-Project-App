@@ -8,6 +8,17 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import ProjectSerializer
 from rest_framework import viewsets, permissions, filters
 from .permissions import IsOwnerOrReadOnly
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+
+class HealthCheckView(APIView):
+    permission_classes = [AllowAny]  # Allows unauthenticated access
+
+    def get(self, request, *args, **kwargs):
+        return Response({"status": "ok"}, status=status.HTTP_200_OK)
+
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all().order_by('-id')

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      imagePullSecrets:
+        - name: my-ecr-secret
+      containers:
+        - name: web
+          image: 891377068214.dkr.ecr.us-east-1.amazonaws.com/my-django-app:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: app-configmap
+            - secretRef:
+                name: app-secret
+          readinessProbe:
+            httpGet:
+              path: /api/health/
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /api/health/
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 45
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
